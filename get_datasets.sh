@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Download the datasets
-mkdir ader/Data
-cd ader/Data
+mkdir src/data
+cd src/data
 mkdir -p AIDER
 cd AIDER
 echo "Downlaoding AIDERV2 Test"
