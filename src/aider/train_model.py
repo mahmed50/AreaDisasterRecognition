@@ -5,6 +5,9 @@ from torchvision import datasets, transforms, models
 from torch.utils.data import DataLoader
 from torch.optim import Adam
 from tqdm import tqdm
+import time
+import platform
+import json
 
 # Configuration
 DATA_DIR = os.path.abspath(
@@ -14,7 +17,7 @@ TRAIN_DIR = os.path.join(DATA_DIR, "train")
 VAL_DIR = os.path.join(DATA_DIR, "val")
 BATCH_SIZE = 32
 NUM_CLASSES = 4
-EPOCHS = 10
+EPOCHS = 2
 LEARNING_RATE = 1e-4
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 MODEL_PATH = os.path.abspath(
@@ -46,8 +49,18 @@ model = model.to(DEVICE)
 criterion = nn.CrossEntropyLoss()
 optimizer = Adam(model.parameters(), lr=LEARNING_RATE)
 
-# Training loop
+
+results = {
+    "system": platform.node(),
+    "device": str(DEVICE),
+    "model": "resnet18",
+    "epochs": EPOCHS,
+    "metrics": [],
+}
+
 for epoch in range(EPOCHS):
+    epoch_start = time.time()
+
     model.train()
     running_loss = 0.0
     correct = 0
@@ -65,7 +78,41 @@ for epoch in range(EPOCHS):
         correct += (outputs.argmax(1) == labels).sum().item()
 
     acc = correct / len(train_dataset)
+    epoch_end = time.time()
+
+    results["metrics"].append(
+        {
+            "epoch": epoch + 1,
+            "train_acc": acc,
+            "train_loss": running_loss,
+            "epoch_time_sec": epoch_end - epoch_start,
+        }
+    )
+
     print(f"Epoch {epoch + 1}: Loss={running_loss:.4f}, Accuracy={acc:.4f}")
+
+# Optional: save after all training
+metrics_path = os.path.join(os.path.dirname(__file__), "..", "models", "metrics.json")
+with open(metrics_path, "w") as f:
+    json.dump(results, f, indent=2)
+
+print(f"⏱️ Metrics saved to {metrics_path}")
+
+# Measure validation accuracy
+val_start = time.time()
+# validation loop ...
+val_time = time.time() - val_start
+
+results["val_acc"] = val_acc
+results["val_time_sec"] = val_time
+
+# Save benchmark
+with open(
+    os.path.join(os.path.dirname(__file__), "..", "models", "metrics.json"), "w"
+) as f:
+    json.dump(results, f, indent=2)
+
+print("⏱️ Training metrics saved.")
 
 # Evaluation
 model.eval()
