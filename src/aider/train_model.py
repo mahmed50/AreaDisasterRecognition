@@ -98,14 +98,6 @@ with open(metrics_path, "w") as f:
 
 print(f"⏱️ Metrics saved to {metrics_path}")
 
-# Measure validation accuracy
-val_start = time.time()
-# validation loop ...
-val_time = time.time() - val_start
-
-results["val_acc"] = val_acc
-results["val_time_sec"] = val_time
-
 # Save benchmark
 with open(
     os.path.join(os.path.dirname(__file__), "..", "models", "metrics.json"), "w"
@@ -126,6 +118,14 @@ with torch.no_grad():
 
 val_acc = correct / len(val_dataset)
 print(f"Validation Accuracy: {val_acc:.4f}")
+
+# Measure validation accuracy
+val_start = time.time()
+# validation loop ...
+val_time = time.time() - val_start
+
+results["val_acc"] = val_acc
+results["val_time_sec"] = val_time
 
 # Save model
 torch.save(model.state_dict(), MODEL_PATH)
