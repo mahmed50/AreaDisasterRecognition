@@ -1,0 +1,20 @@
+{
+  "system": "ProjectVM",
+  "device": "cpu",
+  "model": "resnet18",
+  "epochs": 2,
+  "metrics": [
+    {
+      "epoch": 1,
+      "train_acc": 0.934099559668632,
+      "train_loss": 78.15156830335036,
+      "epoch_time_sec": 3489.900803565979
+    },
+    {
+      "epoch": 2,
+      "train_acc": 0.9841779237256512,
+      "train_loss": 20.73173560597934,
+      "epoch_time_sec": 3486.3393619060516
+    }
+  ]
+}
