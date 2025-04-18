@@ -1,0 +1,20 @@
+{
+  "system": "VM2",
+  "device": "cpu",
+  "model": "resnet18",
+  "epochs": 2,
+  "metrics": [
+    {
+      "epoch": 1,
+      "train_acc": 0.934099559668632,
+      "train_loss": 77.88689249753952,
+      "epoch_time_sec": 3594.0738260746
+    },
+    {
+      "epoch": 2,
+      "train_acc": 0.9827599074557802,
+      "train_loss": 21.672246380359866,
+      "epoch_time_sec": 3626.0074484348297
+    }
+  ]
+}
