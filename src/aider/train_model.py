@@ -5,9 +5,9 @@ from torchvision import datasets, transforms, models
 from torch.utils.data import DataLoader
 from torch.optim import Adam
 from tqdm import tqdm
-import time
-import platform
-import json
+import time, platform, json
+
+
 
 # Configuration
 DATA_DIR = os.path.abspath(
@@ -49,13 +49,13 @@ model = model.to(DEVICE)
 criterion = nn.CrossEntropyLoss()
 optimizer = Adam(model.parameters(), lr=LEARNING_RATE)
 
-
 results = {
     "system": platform.node(),
     "device": str(DEVICE),
     "model": "resnet18",
     "epochs": EPOCHS,
-    "metrics": [],
+    "start_time": time.time(),
+    "metrics": []
 }
 
 for epoch in range(EPOCHS):
@@ -78,8 +78,8 @@ for epoch in range(EPOCHS):
         correct += (outputs.argmax(1) == labels).sum().item()
 
     acc = correct / len(train_dataset)
-    epoch_end = time.time()
-
+    
+    epoch_time = (time.time() - epoch_start) / 60
     results["metrics"].append(
         {
             "epoch": epoch + 1,
@@ -104,7 +104,7 @@ with open(
 ) as f:
     json.dump(results, f, indent=2)
 
-print("⏱️ Training metrics saved.")
+print("Training metrics saved.")
 
 # Evaluation
 model.eval()
@@ -118,11 +118,6 @@ with torch.no_grad():
 
 val_acc = correct / len(val_dataset)
 print(f"Validation Accuracy: {val_acc:.4f}")
-
-# Measure validation accuracy
-val_start = time.time()
-# validation loop ...
-val_time = time.time() - val_start
 
 results["val_acc"] = val_acc
 results["val_time_sec"] = val_time

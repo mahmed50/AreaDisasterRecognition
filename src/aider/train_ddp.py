@@ -7,6 +7,16 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data import DataLoader, DistributedSampler
 from torchvision import datasets, transforms, models
 from tqdm import tqdm
+import time, json, platform
+
+results = {
+    "system": platform.node(),
+    "device": str(device),
+    "model": "resnet18",
+    "epochs": EPOCHS,
+    "start_time": time.time(),
+    "metrics": []
+}
 
 def setup_ddp(rank, world_size):
     backend = "nccl" if torch.cuda.is_available() else "gloo"
@@ -43,6 +53,7 @@ def main(rank, world_size):
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
 
     for epoch in range(2):
+        epoch_start = time.time()
         model.train()
         train_sampler.set_epoch(epoch)
         epoch_loss = 0
