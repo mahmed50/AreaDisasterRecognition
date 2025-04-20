@@ -93,12 +93,12 @@ def main(rank, world_size):
         global_acc = correct_tensor.item() / total_tensor.item()
 
         if rank == 0:
-        print(f"[Epoch {epoch+1}] Global Accuracy: {global_acc:.4f}")
-        results["metrics"].append({
-            "epoch": epoch + 1,
-            "train_loss": epoch_loss,
-            "train_acc": global_acc,
-            "epoch_time_min": epoch_time
+            print(f"[Epoch {epoch+1}] Global Accuracy: {global_acc:.4f}")
+            results["metrics"].append({
+                "epoch": epoch + 1,
+                "train_loss": epoch_loss,
+                "train_acc": global_acc,
+                "epoch_time_min": epoch_time
     })
 
     # Each rank evaluates independently
