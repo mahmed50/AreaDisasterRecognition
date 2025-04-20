@@ -1,0 +1,21 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import json
+from sklearn.metrics import confusion_matrix
+
+def plot_confusion_matrix():
+    y_true = np.load("results/y_true.npy")
+    y_pred = np.load("results/y_pred.npy")
+    with open("results/class_names.json") as f:
+        class_names = json.load(f)
+
+    cm = confusion_matrix(y_true, y_pred)
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+                xticklabels=class_names, yticklabels=class_names)
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    plt.title('Confusion Matrix')
+    plt.tight_layout()
+    plt.show()
