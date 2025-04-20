@@ -6,6 +6,7 @@ import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data import DataLoader, DistributedSampler
 from torchvision import datasets, transforms, models
+from tqdm import tqdm
 
 def setup_ddp(rank, world_size):
     backend = "nccl" if torch.cuda.is_available() else "gloo"
@@ -41,14 +42,14 @@ def main(rank, world_size):
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
 
-    for epoch in range(5):
+    for epoch in range(2):
         model.train()
         train_sampler.set_epoch(epoch)
         epoch_loss = 0
         correct = 0
         total = 0
 
-        for images, labels in train_loader:
+        for images, labels in tqdm(train_loader, desc=f"[Rank {rank}] Epoch {epoch+1}"):
             images, labels = images.to(device), labels.to(device)
 
             optimizer.zero_grad()
