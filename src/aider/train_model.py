@@ -37,6 +37,11 @@ transform = transforms.Compose(
 train_dataset = datasets.ImageFolder(TRAIN_DIR, transform=transform)
 val_dataset = datasets.ImageFolder(VAL_DIR, transform=transform)
 
+# Limit dataset size for quick testing
+MAX_SAMPLES = 1000  # or 200 for ultra-fast tests
+train_dataset = torch.utils.data.Subset(train_dataset, range(MAX_SAMPLES))
+val_dataset = torch.utils.data.Subset(val_dataset, range(200))
+
 train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE)
 
@@ -76,7 +81,7 @@ for epoch in range(EPOCHS):
 
         running_loss += loss.item()
         correct += (outputs.argmax(1) == labels).sum().item()
-
+        
     acc = correct / len(train_dataset)
     
     epoch_time = (time.time() - epoch_start) / 60
@@ -85,26 +90,11 @@ for epoch in range(EPOCHS):
             "epoch": epoch + 1,
             "train_acc": acc,
             "train_loss": running_loss,
-            "epoch_time_sec": epoch_end - epoch_start,
+            "epoch_time_min": epoch_time
         }
     )
 
     print(f"Epoch {epoch + 1}: Loss={running_loss:.4f}, Accuracy={acc:.4f}")
-
-# Optional: save after all training
-metrics_path = os.path.join(os.path.dirname(__file__), "..", "models", "metrics.json")
-with open(metrics_path, "w") as f:
-    json.dump(results, f, indent=2)
-
-print(f"⏱️ Metrics saved to {metrics_path}")
-
-# Save benchmark
-with open(
-    os.path.join(os.path.dirname(__file__), "..", "models", "metrics.json"), "w"
-) as f:
-    json.dump(results, f, indent=2)
-
-print("Training metrics saved.")
 
 # Evaluation
 model.eval()
@@ -120,7 +110,14 @@ val_acc = correct / len(val_dataset)
 print(f"Validation Accuracy: {val_acc:.4f}")
 
 results["val_acc"] = val_acc
-results["val_time_sec"] = val_time
+
+# Save benchmark
+with open(
+    os.path.join(os.path.dirname(__file__), "..", "metrics", "metrics_single.json"), "w"
+) as f:
+    json.dump(results, f, indent=2)
+
+print("Training metrics saved.")
 
 # Save model
 torch.save(model.state_dict(), MODEL_PATH)

@@ -8,6 +8,7 @@ from torch.utils.data import DataLoader, DistributedSampler
 from torchvision import datasets, transforms, models
 from tqdm import tqdm
 import time, json, platform
+import torch.distributed as dist
 
 results = {
     "system": platform.node(),
@@ -32,6 +33,7 @@ def main(rank, world_size):
 
     DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'AIDER'))
     TRAIN_DIR = os.path.join(DATA_DIR, 'train')
+    VAL_DIR = os.path.join(DATA_DIR, 'val')
 
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
@@ -41,6 +43,12 @@ def main(rank, world_size):
     ])
 
     train_dataset = datasets.ImageFolder(TRAIN_DIR, transform=transform)
+    val_dataset = datasets.ImageFolder(VAL_DIR, transform=transform)
+    
+    MAX_SAMPLES = 1000  # or 200 for ultra-fast tests
+    train_dataset = torch.utils.data.Subset(train_dataset, range(MAX_SAMPLES))
+    val_dataset = torch.utils.data.Subset(val_dataset, range(200))
+
     train_sampler = DistributedSampler(train_dataset, num_replicas=world_size, rank=rank, shuffle=True)
     train_loader = DataLoader(train_dataset, batch_size=32, sampler=train_sampler)
 
@@ -73,13 +81,65 @@ def main(rank, world_size):
             correct += (outputs.argmax(1) == labels).sum().item()
             total += labels.size(0)
 
+        
+        correct_tensor = torch.tensor(correct, dtype=torch.float, device=device)
+        total_tensor = torch.tensor(total, dtype=torch.float, device=device)
+
+        # Sum across all processes
+        dist.all_reduce(correct_tensor, op=dist.ReduceOp.SUM)
+        dist.all_reduce(total_tensor, op=dist.ReduceOp.SUM)
+
+        # Global accuracy (same as single-node)
+        global_acc = correct_tensor.item() / total_tensor.item()
+
         if rank == 0:
-            print(f"[Epoch {epoch+1}] Loss: {epoch_loss:.4f}, Accuracy: {correct/total:.4f}")
+        print(f"[Epoch {epoch+1}] Global Accuracy: {global_acc:.4f}")
+        results["metrics"].append({
+            "epoch": epoch + 1,
+            "train_loss": epoch_loss,
+            "train_acc": global_acc,
+            "epoch_time_min": epoch_time
+    })
+
+    # Each rank evaluates independently
+    correct = 0
+    total = 0
+
+    model.eval()
+    with torch.no_grad():
+        for i, (images, labels) in enumerate(val_loader):
+            if i % world_size != rank:
+                continue  # skip batches not assigned to this rank
+
+            images, labels = images.to(device), labels.to(device)
+            outputs = model(images)
+            correct += (outputs.argmax(1) == labels).sum().item()
+            total += labels.size(0)
+
+    # Convert to tensors and all-reduce
+    correct_tensor = torch.tensor(correct, dtype=torch.float, device=device)
+    total_tensor = torch.tensor(total, dtype=torch.float, device=device)
+
+    dist.all_reduce(correct_tensor, op=dist.ReduceOp.SUM)
+    dist.all_reduce(total_tensor, op=dist.ReduceOp.SUM)
+
+    val_acc = correct_tensor.item() / total_tensor.item()
+
+    if rank == 0:
+        print(f"✅ Global Validation Accuracy: {val_acc:.4f}")
+        results["val_acc"] = val_acc
 
     if rank == 0:
         save_path = os.path.join(os.path.dirname(__file__), '..', 'models', 'ader_ddp_cpu.pt')
         torch.save(model.module.state_dict(), save_path)
         print(f"✅ Model saved to {save_path}")
+
+    if rank == 0 or not hasattr(dist, "is_initialized") or not dist.is_initialized():
+        out_file = os.path.join(os.path.dirname(__file__), '..', 'metrics', 'metrics_ddp.json')
+        with open(out_file, 'w') as f:
+        json.dump(results, f, indent=2)
+        print(f"📈 Metrics saved to {out_file}")
+
 
     cleanup()
 
