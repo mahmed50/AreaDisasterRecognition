@@ -10,15 +10,6 @@ from tqdm import tqdm
 import time, json, platform
 import torch.distributed as dist
 
-results = {
-    "system": platform.node(),
-    "device": str(device),
-    "model": "resnet18",
-    "epochs": EPOCHS,
-    "start_time": time.time(),
-    "metrics": []
-}
-
 def setup_ddp(rank, world_size):
     backend = "nccl" if torch.cuda.is_available() else "gloo"
     dist.init_process_group(backend, rank=rank, world_size=world_size)
@@ -60,6 +51,15 @@ def main(rank, world_size):
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
 
+    results = {
+    "system": platform.node(),
+    "device": str(device),
+    "model": "resnet18",
+    "epochs": EPOCHS,
+    "start_time": time.time(),
+    "metrics": []
+    }
+
     for epoch in range(2):
         epoch_start = time.time()
         model.train()
@@ -99,7 +99,7 @@ def main(rank, world_size):
                 "train_loss": epoch_loss,
                 "train_acc": global_acc,
                 "epoch_time_min": epoch_time
-    })
+            })
 
     # Each rank evaluates independently
     correct = 0
@@ -136,8 +136,10 @@ def main(rank, world_size):
 
     if rank == 0 or not hasattr(dist, "is_initialized") or not dist.is_initialized():
         out_file = os.path.join(os.path.dirname(__file__), '..', 'metrics', 'metrics_ddp.json')
-        with open(out_file, 'w') as f:
-        json.dump(results, f, indent=2)
+        with open(
+            out_file, 'w'
+        ) as f:
+            json.dump(results, f, indent=2)
         print(f"📈 Metrics saved to {out_file}")
 
 
