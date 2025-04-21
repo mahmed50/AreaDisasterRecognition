@@ -56,12 +56,12 @@ def main(rank, world_size):
     "system": platform.node(),
     "device": str(device),
     "model": "resnet18",
-    "epochs": 10,
+    "epochs": 6,
     "start_time": time.time(),
     "metrics": []
     }
 
-    for epoch in range(10):
+    for epoch in range(6):
         epoch_start = time.time()
         model.train()
         train_sampler.set_epoch(epoch)
