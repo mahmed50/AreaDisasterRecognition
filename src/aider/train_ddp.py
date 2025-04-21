@@ -36,9 +36,9 @@ def main(rank, world_size):
     train_dataset = datasets.ImageFolder(TRAIN_DIR, transform=transform)
     val_dataset = datasets.ImageFolder(VAL_DIR, transform=transform)
     
-    MAX_SAMPLES = 1000  # or 200 for ultra-fast tests
+    MAX_SAMPLES = 5000  # or 200 for ultra-fast tests
     train_dataset = torch.utils.data.Subset(train_dataset, range(MAX_SAMPLES))
-    val_dataset = torch.utils.data.Subset(val_dataset, range(200))
+    val_dataset = torch.utils.data.Subset(val_dataset, range(1000))
 
     train_sampler = DistributedSampler(train_dataset, num_replicas=world_size, rank=rank, shuffle=True)
     train_loader = DataLoader(train_dataset, batch_size=32, sampler=train_sampler)
@@ -56,12 +56,12 @@ def main(rank, world_size):
     "system": platform.node(),
     "device": str(device),
     "model": "resnet18",
-    "epochs": 2,
+    "epochs": 10,
     "start_time": time.time(),
     "metrics": []
     }
 
-    for epoch in range(2):
+    for epoch in range(10):
         epoch_start = time.time()
         model.train()
         train_sampler.set_epoch(epoch)

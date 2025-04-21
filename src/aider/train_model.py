@@ -17,7 +17,7 @@ TRAIN_DIR = os.path.join(DATA_DIR, "train")
 VAL_DIR = os.path.join(DATA_DIR, "val")
 BATCH_SIZE = 32
 NUM_CLASSES = 4
-EPOCHS = 2
+EPOCHS = 10
 LEARNING_RATE = 1e-4
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 MODEL_PATH = os.path.abspath(
@@ -38,9 +38,9 @@ train_dataset = datasets.ImageFolder(TRAIN_DIR, transform=transform)
 val_dataset = datasets.ImageFolder(VAL_DIR, transform=transform)
 
 # Limit dataset size for quick testing
-MAX_SAMPLES = 1000  # or 200 for ultra-fast tests
+MAX_SAMPLES = 5000  # or 200 for ultra-fast tests
 train_dataset = torch.utils.data.Subset(train_dataset, range(MAX_SAMPLES))
-val_dataset = torch.utils.data.Subset(val_dataset, range(200))
+val_dataset = torch.utils.data.Subset(val_dataset, range(1000))
 
 train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE)
