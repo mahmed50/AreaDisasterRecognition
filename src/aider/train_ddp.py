@@ -42,7 +42,8 @@ def main(rank, world_size):
 
     train_sampler = DistributedSampler(train_dataset, num_replicas=world_size, rank=rank, shuffle=True)
     train_loader = DataLoader(train_dataset, batch_size=32, sampler=train_sampler)
-
+    val_loader = DataLoader(val_dataset, batch_size=32)
+    
     model = models.resnet18(pretrained=True)
     model.fc = nn.Linear(model.fc.in_features, 4)  # Adjust if needed
     model = model.to(device)
@@ -55,7 +56,7 @@ def main(rank, world_size):
     "system": platform.node(),
     "device": str(device),
     "model": "resnet18",
-    "epochs": EPOCHS,
+    "epochs": 2,
     "start_time": time.time(),
     "metrics": []
     }
@@ -94,6 +95,8 @@ def main(rank, world_size):
 
         if rank == 0:
             print(f"[Epoch {epoch+1}] Global Accuracy: {global_acc:.4f}")
+            epoch_time = (time.time() - epoch_start) / 60
+            
             results["metrics"].append({
                 "epoch": epoch + 1,
                 "train_loss": epoch_loss,
