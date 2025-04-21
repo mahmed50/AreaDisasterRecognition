@@ -1,0 +1,46 @@
+{
+  "system": "ProjectVM",
+  "device": "cpu",
+  "model": "resnet18",
+  "epochs": 6,
+  "start_time": 1745213215.6016848,
+  "metrics": [
+    {
+      "epoch": 1,
+      "train_acc": 0.9808,
+      "train_loss": 10.672880815109238,
+      "epoch_time_min": 21.998053367932638
+    },
+    {
+      "epoch": 2,
+      "train_acc": 0.9964,
+      "train_loss": 1.9565347777097486,
+      "epoch_time_min": 22.103106009960175
+    },
+    {
+      "epoch": 3,
+      "train_acc": 0.9988,
+      "train_loss": 1.1670442233153153,
+      "epoch_time_min": 22.611402368545534
+    },
+    {
+      "epoch": 4,
+      "train_acc": 0.9992,
+      "train_loss": 0.6675435435317922,
+      "epoch_time_min": 22.58255936304728
+    },
+    {
+      "epoch": 5,
+      "train_acc": 1.0,
+      "train_loss": 0.11949311767239124,
+      "epoch_time_min": 22.02939466238022
+    },
+    {
+      "epoch": 6,
+      "train_acc": 1.0,
+      "train_loss": 0.06922323040635092,
+      "epoch_time_min": 21.8536506374677
+    }
+  ],
+  "val_acc": 0.671
+}
