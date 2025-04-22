@@ -1,0 +1,20 @@
+# Run Confusion Matrix
+!python3 plot_confusion_matrix.py
+
+# Run Classification Report
+!python3 plot_classification_report.py
+
+# Run Training Metrics Plot
+import json
+from plot_training_metrics import plot_accuracy_loss_from_vm_metrics
+
+# Load your metrics JSON file
+with open('single_metrics.json') as f:  # Use your correct JSON file here
+    metrics = json.load(f)["metrics"]
+
+# Plot accuracy and loss from the metrics
+plot_accuracy_loss_from_vm_metrics(metrics, title="Training Metrics")
+
+
+
+
