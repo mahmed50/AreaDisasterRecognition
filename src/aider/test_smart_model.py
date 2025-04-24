@@ -12,7 +12,7 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Paths
 MODEL_PATH = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..", "models", "initial_model.pt")
+    os.path.join(os.path.dirname(__file__), "..", "models", "old_VM1_model.pt")
 )
 DATA_PATH = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "data", "AIDER", "val")
@@ -71,4 +71,3 @@ print(f"✅ Accuracy on 500 samples: {accuracy:.4f}")
 for idx in SELECTED_INDICES:
     res = results[idx]
     print(f"[{idx:>3}] Expected: {res['expected']:10} | Predicted: {res['predicted']}")
-
