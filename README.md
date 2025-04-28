@@ -2,15 +2,15 @@
 
 A deep learning pipeline for aerial disaster image classification using PyTorch, React, and Azure.
 
-Installation
+# Installation
 
-# Clone the repo
+## Clone the repo
 ```
 git clone https://github.com/mahmed50/AreaDisasterRecognition.git
 cd ader
 ```
 
-# Download and split the datasets
+## Download and split the datasets
 ```
 sh get_datasets.sh
 ```
@@ -21,17 +21,17 @@ cd data/aider
 mv test val
 ```
 
-# Set up virtual environment
+## Set up virtual environment
 Chances are, you won't be able to run python commands unless you set up a virtual environment.
 ```
 python -m venv venv
 source venv/bin/activate  # or venv\\Scripts\\activate on Windows
 ```
-# Install dependencies
+## Install dependencies
 ```
 pip install torch torchvision tqdm
 ```
-# Single-Node Training
+## Single-Node Training
 ```
 python src/train_model.py
 ```
@@ -41,7 +41,7 @@ Outputs:
 
 - Metrics: metrics/metrics_single.json
   
-# Distributed (DDP) Training (Multi-VM)
+## Distributed (DDP) Training (Multi-VM)
 
 1. SSH into both VMs.
 
@@ -51,7 +51,7 @@ export MASTER_ADDR=<IP_or_hostname_of_rank0>
 export MASTER_PORT=29500
 ```
 
-Launch training:
+##Launch training:
 
 On VM1 (rank 0):
 ```
@@ -67,7 +67,7 @@ Outputs:
 
 - Metrics: models/metrics_ddp.json
 
-#Test a saved model
+##Test a saved model
 You can test using any image downloaded from online. Just point the model to the image using the --image flag.
 
 You can test the smart model or the dumb model. The only difference is the sample sizes they were trained on (full sample vs 5,000 images).
