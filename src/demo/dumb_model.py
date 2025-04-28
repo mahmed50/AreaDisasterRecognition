@@ -2,14 +2,18 @@ import torch
 from torchvision import transforms, models
 from PIL import Image
 import os
+import argparse
 
 # Paths
 model_path = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "models", "distributed_vm.pt")
 )
-image_path = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "./", "earthquake.png")
-)
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--image", type=str, required=True, help="Path to input image")
+args = parser.parse_args()
+
+image_path = os.path.abspath(os.path.join(os.path.dirname(__file__), args.image))
 
 num_classes = 4  # change if needed
 class_names = ["Earthquake", "Fire", "Flood", "Normal"]
@@ -40,5 +44,5 @@ with torch.no_grad():
     output = model(input_tensor)
     predicted = output.argmax(1).item()
 
-print(f"Image: {os.path.basename(image_path)}")
-print(f"Predicted Class: {class_names[predicted]}")
+print(f"\nImage: {os.path.basename(image_path)}")
+print(f"Predicted Class: {class_names[predicted]}\n")
