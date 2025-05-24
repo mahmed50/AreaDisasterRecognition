@@ -9,6 +9,7 @@ By leveraging multiple virtual machines for training, A.D.E.R will quickly and a
 <img width="500" alt="Screenshot 2025-05-23 at 8 20 14 PM" src="https://github.com/user-attachments/assets/c64184ca-5ec9-4ebb-8aae-6da04ddb3999" />
 <img width="500" alt="Screenshot 2025-05-23 at 8 19 06 PM" src="https://github.com/user-attachments/assets/65c54743-e845-4eb0-9e43-b44d0e48f812" />
 <img width="500" alt="Screenshot 2025-05-23 at 8 19 51 PM" src="https://github.com/user-attachments/assets/8dd74ae4-8f30-4764-99ff-6e31ae451ecd" />
+<img width="500" alt="Screenshot 2025-05-23 at 9 09 02 PM" src="https://github.com/user-attachments/assets/8bd9bc36-8cce-4e61-933b-9b4ac5c0f68c" />
 
 # Installation
 
