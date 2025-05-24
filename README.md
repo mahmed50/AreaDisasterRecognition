@@ -24,7 +24,7 @@ cd ader
 sh get_datasets.sh
 ```
 
-rename the downloaded test folder to "val", respectively
+Rename the downloaded test folder to "val", respectively
 ```
 cd data/aider
 mv test val
@@ -60,7 +60,7 @@ export MASTER_ADDR=<IP_or_hostname_of_rank0>
 export MASTER_PORT=29500
 ```
 
-##Launch training:
+## Launch training:
 
 On VM1 (rank 0):
 ```
