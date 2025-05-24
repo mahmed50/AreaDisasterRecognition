@@ -1,6 +1,6 @@
 # Area Disaster Event Recognizer (A.D.E.R)
 
-A.D.E.R is a Deep Neural Network (DNN) model trained through distributed computing to recognize and classify aerial images of emergency events (floods, earthquakes, fires).
+A.D.E.R is a Deep Neural Network (DNN) model trained through distributed computing to recognize and classify user-submitted aerial images of emergency events (floods, earthquakes, fires).
 
 By leveraging multiple virtual machines for training, A.D.E.R will quickly and accurately detect disasters, enabling emergency services to respond faster and allocate resources more efficiently.
 
