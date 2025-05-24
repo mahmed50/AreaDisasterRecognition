@@ -76,7 +76,7 @@ Outputs:
 
 - Metrics: models/metrics_ddp.json
 
-##Test a saved model
+## Test a saved model
 You can test using any image downloaded from online. Just point the model to the image using the --image flag.
 
 You can test the smart model or the dumb model. The only difference is the sample sizes they were trained on (full sample vs 5,000 images).
